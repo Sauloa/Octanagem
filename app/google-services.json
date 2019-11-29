@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "759508720306",
+    "firebase_url": "https://octanagem2019.firebaseio.com",
+    "project_id": "octanagem2019",
+    "storage_bucket": "octanagem2019.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759508720306:android:ac63be067e28e3627407ab",
+        "android_client_info": {
+          "package_name": "com.aaaemec.octanagem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759508720306-8u8fo7sf35laquv37i3iqll5mijv47hm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0DDti9lk20OlH3JA4g69UVan8BBErJBw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "759508720306-8u8fo7sf35laquv37i3iqll5mijv47hm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

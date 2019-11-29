@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#500096</color>
+    <color name="colorPrimaryDark">#410069</color>
+    <color name="colorAccent">#694DB6</color>
+    <color name="transparent">#00000000</color>
+    <color name="editTextBG">#DADADA</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="gray">#727272</color>
+    <color name="amarelo">#FFC107</color>
+    <color name="colorText">#666666</color>
+    <color name="colorLink">#00A6FF</color>
+    <color name="colorNavButton">#77D353</color>
+    <color name="colorViewLine">#DDDDDD</color>
+
+    <color name="colorNavItemSelected">#F1F1F1</color>
+
+    <color name="colorLightGreenBox">#BB77D353</color>
+
+    <color name="colorOrangeInfo">#FF9052</color>
+
+    <color name="colorLightYellowBox">#BBFFF150</color>
+
+    <!--
+        Cor de background para EditText em foco.
+    -->
+    <color name="colorFieldFocused">#F2F9FF</color>
+
+    <!--
+        Cor de background da tela de proxy, quando
+        os dados de formulÃ¡rio estÃ£o sendo enviados
+        ao back-end Web.
+    -->
+    <color name="colorBackgroundProxy">#55FFFFFF</color>
+
+    <color name="colorTextBox">#EEEEEE</color>
+    <color name="colorTextBoxTransparent">#CCEEEEEE</color>
+    <color name="colorLightGrey">#AAAAAA</color>
+    <color name="colorLighterGrey">#EFEFEF</color>
+
+    <color name="colorLightRed">#F85F62</color>
+    <color name="colorLightBlue">#00A4FF</color>
+
+    <color name="colorMediumYellow">#FFFFD840</color>
+    <color name="colorMediumRed">#FF0000</color>
+
+
+
+
+    <color name="facebookBlue">#3F5996</color>
+    <color name="twitterBlue">#29C5F6</color>
+    <color name="googleRed">#D03E2F</color>
+
+
+    <color name="textColor">#6e6e6e</color>
+
+
+</resources>
