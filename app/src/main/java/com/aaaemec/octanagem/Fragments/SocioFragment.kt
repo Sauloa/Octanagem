@@ -21,6 +21,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 
 import kotlinx.android.synthetic.main.socio_fragment.*
@@ -28,9 +29,10 @@ import kotlinx.android.synthetic.main.socio_fragment.*
 class SocioFragment : Fragment() {
     val mAuth = FirebaseAuth.getInstance()
     val mFirebaseUser = mAuth.getCurrentUser()
-    val mDB = FirebaseDatabase.getInstance()
-    val ref = mDB.getReference().child("users")
+    val mDB = FirebaseFirestore.getInstance()
     val uid = FirebaseAuth.getInstance().uid ?: ""
+    val ref = mDB.collection("Users").document(uid).collection("socio").document("dados")
+
 
     val nome = R.id.prof_nome.toString()
     val nacionalidade = R.id.prof_nacionalidade.toString()
@@ -102,7 +104,6 @@ class SocioFragment : Fragment() {
         tel: String, matricula: String, ies: String, curso: String
     ) {
         val uid = FirebaseAuth.getInstance().uid ?: ""
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
         val nome = prof_nome.text.toString()
         val nacionalidade = prof_nacionalidade.text.toString()
@@ -127,7 +128,7 @@ class SocioFragment : Fragment() {
             estado, cep, tel, mat, ies, curso
         )
 
-        ref.child("socio").setValue(user)
+        ref.set(user)
         Log.d("Socio","$user")
     }
 }

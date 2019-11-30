@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 
 import kotlinx.android.synthetic.main.card_fragment.*
@@ -27,8 +28,8 @@ class CardFragment : Fragment() {
 
     val mAuth = FirebaseAuth.getInstance()
     val mFirebaseUser = mAuth.getCurrentUser()
-    val mDB = FirebaseDatabase.getInstance()
-    val ref = mDB.getReference().child("users")
+    val mDB = FirebaseFirestore.getInstance()
+    val ref = mDB.collection("Users")
     val uid = FirebaseAuth.getInstance().uid ?: ""
 
     override fun onCreateView(
@@ -51,21 +52,17 @@ class CardFragment : Fragment() {
 
         mFirebaseUser?.let {
             val uid = mFirebaseUser.uid
-            ref.child(uid).child("socio").addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        val data = dataSnapshot.getValue(Profile::class.java)
-                        Log.d("MainActivity", "")
-
-                        if (data != null) {
-                            tv_name.text = data.nome
-                            tv_ies.text = data.ies
-                            tv_curso.text = data.curso
-                            tv_cpf.text = addMask(data.cpf, "###.###.###-##")
-                            tv_rg.text = addMask(data.rg,"##.###.###-##")
-                            tv_nascimento.text = addMask(data.data,"##/##/####")
-                            tv_mat.text = data.matricula
-                            tv_id.text = addMask(data.uid,"###-###")
+            ref.document(uid).collection("socio").document("dados").get()
+                .addOnSuccessListener { document ->
+                if (document != null) {
+                            tv_name.text = document.getString("nome")
+                            tv_ies.text = document.getString("ies")
+                            tv_curso.text = document.getString("curso")
+                            tv_cpf.text = addMask(document.getString("cpf"), "###.###.###-##")
+                            tv_rg.text = addMask(document.getString("rg"),"##.###.###-##")
+                            tv_nascimento.text = addMask(document.getString("data"),"##/##/####")
+                            tv_mat.text = document.getString("matricula")
+                            tv_id.text = addMask(document.getString("uid"),"###-###")
 
 
                         }
@@ -73,27 +70,19 @@ class CardFragment : Fragment() {
                     }
                 }
 
-                override fun onCancelled(dataSnapshot: DatabaseError) {
-
-                }
 
 
-            })
+            ref.document(uid).collection("Status").document("socio").get()
+                .addOnSuccessListener { document ->
+                    val nome = document.getString("status")
 
-            ref.child(uid).addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val data = dataSnapshot.getValue(Status::class.java)
-                    if (data != null) {
-                        tv_status.text = data.status
+                    if (document != null) {
+                        tv_status.text = nome
                     }
 
                 }
 
-                override fun onCancelled(dataSnapshot: DatabaseError) {}
 
-
-            })
-        }
 
 
     }
@@ -119,27 +108,18 @@ class CardFragment : Fragment() {
 
         mFirebaseUser?.let {
             val uid = mFirebaseUser.uid
-            ref.child(uid).addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        val data = dataSnapshot.getValue(User::class.java)
-                        Log.d("MainActivity", "")
+            ref.document(uid).get()
+                .addOnSuccessListener { document ->
+                    val img = document.getString("profileImageUrl")
 
-                        if (data != null) {
-                            if (data.profileImageUrl != null && !data.profileImageUrl.isEmpty()) {
-                                Picasso.get().load(data.profileImageUrl).into(img_card)
-                            }
+                    if (document != null) {
+
+                        if (!img!!.isEmpty()) {
+                            Picasso.get().load(img).into(img_card)
                         }
-
                     }
-                }
-
-                override fun onCancelled(dataSnapshot: DatabaseError) {
 
                 }
-
-
-            })
         }
 
 

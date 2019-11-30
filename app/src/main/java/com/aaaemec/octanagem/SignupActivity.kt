@@ -23,6 +23,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_signup.*
 import kotlinx.android.synthetic.main.content_signup.*
@@ -154,20 +155,15 @@ class SignupActivity : AppCompatActivity() {
 
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
         val uid = FirebaseAuth.getInstance().uid ?: ""
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        val ref = FirebaseFirestore.getInstance().collection("Users").document(uid) //("/users/$uid")
 
         val user =
             User(uid, et_user.text.toString(), profileImageUrl, et_email_signup.text.toString())
+        val status = Status("pendente")
 
-        ref.setValue(user)
-            .addOnSuccessListener {
-                Log.d(TAG, "Finally we saved the user to Firebase Database")
-            }
-            .addOnFailureListener {
-                Log.d(TAG, "Failed to set value to database: ${it.message}")
-            }
-        ref.child("status").setValue("pendente")
-        ref.child("id").setValue(0)
+        ref.set(user)
+        ref.collection("Status").document("socio").set(status)
+        ref.set(status)
     }
 
 

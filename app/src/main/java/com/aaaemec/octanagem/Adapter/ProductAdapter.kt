@@ -79,7 +79,7 @@ class ProductAdapter(var ctx: FragmentActivity, var items: ArrayList<Produtos>) 
 
                     val title = titleP.text.toString()
                     val price = addMask(priceP.text.toString(), "R$####")
-                    val thumbnail = thumbnailP
+                    val thumbnail = thumbnailP.toString()
                     val produto = Cart(title, price, thumbnail, x)
                     ref.collection("Produto").document(x.toString()).set(produto)
 //                    ref.collection("Id").document("id").set(Id)

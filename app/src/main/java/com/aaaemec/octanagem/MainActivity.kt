@@ -15,12 +15,14 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.aaaemec.octanagem.Fragments.*
+import com.aaaemec.octanagem.Model.Produtos
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.nav_header_main.*
@@ -29,8 +31,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     val mAuth = FirebaseAuth.getInstance()
     val mFirebaseUser = mAuth.getCurrentUser()
-    val mDB = FirebaseDatabase.getInstance()
-    val ref = mDB.getReference().child("users")
+    val mDB = FirebaseFirestore.getInstance()
+    val ref = mDB.collection("Users")
 
     companion object {
         /*
@@ -130,7 +132,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, CartFragment()).commit()
             Toast.makeText(this, "Carrinho", Toast.LENGTH_SHORT).show()
-        } else if (id == R.id.nav_logout) {
+        } else if (id == R.id.nav_parceiros) {
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, ParceiroFragment()).commit()
+            Toast.makeText(this, "Parceiros", Toast.LENGTH_SHORT).show()
+        }else if (id == R.id.nav_logout) {
             mAuth.signOut()
             finish()
             val intToHome = Intent(this, LoginActivity::class.java)
@@ -193,29 +199,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         mFirebaseUser?.let {
             val uid = mFirebaseUser.uid
-            ref.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        val data = dataSnapshot.getValue(User::class.java)
+            ref.document(uid).get()
+                .addOnSuccessListener { document ->
+                    val nome = document.getString("username")
+                    val info = document.getString("email")
+                    val img = document.getString("profileImageUrl")
 
-                        if (data != null) {
-                            tv_nome.text = data.username
-                            tv_info.text = data.email
-                            if (!data.profileImageUrl.isEmpty()) {
-                                Picasso.get().load(data.profileImageUrl).into(iv_nav)
+                        if (document != null) {
+                            tv_nome.text = nome
+                            tv_info.text = info
+                            if (!img!!.isEmpty()) {
+                                Picasso.get().load(img).into(iv_nav)
                             }
                         }
 
                     }
                 }
 
-                override fun onCancelled(dataSnapshot: DatabaseError) {
-
-                }
 
 
-            })
-        }
+
 
 
     }
@@ -223,26 +226,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun updatesocio() {
         mFirebaseUser?.let {
             val uid = mFirebaseUser.uid
-            ref.child(uid).addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val data = dataSnapshot.getValue(Status::class.java)
-                    if (data != null) {
-                        val Socio = data.status
+            ref.document(uid).collection("Status").document("socio").get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        val Socio = document.getString("status")
 
                         Log.d("Socio", "$Socio")
-                        if (data.status != "pendente") {
+                        if (Socio != "pendente") {
                             naview()
                         }
+                    }
                     }
 
                 }
 
-                override fun onCancelled(dataSnapshot: DatabaseError) {}
 
-
-            })
-
-        }
 
     }
 

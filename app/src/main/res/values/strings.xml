@@ -42,6 +42,7 @@
     <string name="profile_nasci">Nascimento</string>
     <string name="profile_curso">Curso</string>
     <string name="title_activity_socio_fragment">SocioFragment</string>
+    <string name="menu_parceiros">Parceiros</string>
 
 
 </resources>
