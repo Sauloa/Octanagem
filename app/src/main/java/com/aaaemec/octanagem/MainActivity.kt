@@ -23,9 +23,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.mercadopago.android.px.core.MercadoPagoCheckout
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.nav_header_main.*
+import org.json.JSONArray
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -33,6 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val mFirebaseUser = mAuth.getCurrentUser()
     val mDB = FirebaseFirestore.getInstance()
     val ref = mDB.collection("Users")
+    val token = "TEST-e287ed41-dee0-4d74-9039-dd68cf6f685e"
 
     companion object {
         /*
@@ -43,6 +47,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         const val FRAGMENT_TAG = "frag-tag"
         const val FRAGMENT_ID = "frag-id"
+        const val REQUEST_CODE = 1
     }
 
 
@@ -136,7 +141,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, ParceiroFragment()).commit()
             Toast.makeText(this, "Parceiros", Toast.LENGTH_SHORT).show()
-        }else if (id == R.id.nav_logout) {
+        } else if (id == R.id.nav_logout) {
             mAuth.signOut()
             finish()
             val intToHome = Intent(this, LoginActivity::class.java)
@@ -205,20 +210,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val info = document.getString("email")
                     val img = document.getString("profileImageUrl")
 
-                        if (document != null) {
-                            tv_nome.text = nome
-                            tv_info.text = info
-                            if (!img!!.isEmpty()) {
-                                Picasso.get().load(img).into(iv_nav)
-                            }
+                    if (document != null) {
+                        tv_nome.text = nome
+                        tv_info.text = info
+                        if (!img!!.isEmpty()) {
+                            Picasso.get().load(img).into(iv_nav)
                         }
-
                     }
+
                 }
-
-
-
-
+        }
 
 
     }
@@ -236,38 +237,75 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             naview()
                         }
                     }
-                    }
-
                 }
 
+        }
 
 
     }
 
-    fun naview(){
+    fun naview() {
         val naview: NavigationView = findViewById(R.id.nav_view)
-        val menu : Menu = naview.menu
+        val menu: Menu = naview.menu
 
         menu.findItem(R.id.socio).setVisible(false)
         menu.findItem(R.id.nav_carteira).setVisible(true)
     }
 
-    fun addMask(text: String, mask: String): String{
+    fun addMask(text: String, mask: String): String {
         var formatado: String = ""
         var i = 0
-        for(m: Char in mask.toCharArray()){
-            if(m != '#'){
+        for (m: Char in mask.toCharArray()) {
+            if (m != '#') {
                 formatado += m
                 continue
             }
-            try{
+            try {
                 formatado += text[i]
-            } catch(e: Exception){
+            } catch (e: Exception) {
                 break
             }
             i++
         }
         return formatado
+    }
+
+    var strjsonobj : StringBuilder = StringBuilder()
+    val strJson : String = "{\n" +
+            "           \"items\": [\n" +
+            "               {\n" +
+            "               \"title\": \"Item\",\n" +
+            "               \"description\": \"Multicolor Item\",\n" +
+            "               \"quantity\": 1,\n" +
+            "               \"currency_id\": \"BRL\",\n" +
+            "               \"unit_price\": 35.0\n" +
+            "               }\n" +
+            "           ],\n" +
+            "           \"payer\": {\n" +
+            "\t\t    \"name\": \"Núbia\",\n" +
+            "\t\t    \"surname\": \"Macedo\",\n" +
+            "\t\t    \"email\": \"leann@gmail.com\",\n" +
+            "\t\t    \"date_created\": \"2015-06-02T12:58:41.425-04:00\",\n" +
+            "\t\t    \"phone\": {\n" +
+            "\t\t      \"area_code\": \"\",\n" +
+            "\t\t      \"number\": \"880.402.7555\"\n" +
+            "\t\t    },\n" +
+            "\t\t    \"identification\": {\n" +
+            "\t\t      \"type\": \"DNI\",\n" +
+            "\t\t      \"number\": \"123456789\"\n" +
+            "\t\t    },\n" +
+            "\t\t    \"address\": {\n" +
+            "\t\t      \"street_name\": \"Núbia Viela\",\n" +
+            "\t\t      \"street_number\": 25598,\n" +
+            "\t\t      \"zip_code\": \"8972\"\n" +
+            "\t\t    }\n" +
+            "\t\t  }\n" +
+            "     }"
+
+
+    fun pagamento(preference: String) {
+    MercadoPagoCheckout.Builder(token,preference).build()
+        .startPayment(this, Companion.REQUEST_CODE)
     }
 
 
@@ -277,7 +315,8 @@ class Status(val status: String?) {
     constructor() : this("")
 
 }
-class Id(val id: Int){
-constructor() : this(0)
+
+class Id(val id: Int) {
+    constructor() : this(0)
 }
 

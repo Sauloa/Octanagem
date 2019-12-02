@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import com.aaaemec.octanagem.Adapter.id
 import com.blankj.utilcode.util.ActivityUtils
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.navigation.NavigationView
@@ -155,15 +156,17 @@ class SignupActivity : AppCompatActivity() {
 
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
         val uid = FirebaseAuth.getInstance().uid ?: ""
+        val db =  FirebaseFirestore.getInstance().collection("Carrinhos").document(uid).collection("Id").document("id")
         val ref = FirebaseFirestore.getInstance().collection("Users").document(uid) //("/users/$uid")
 
         val user =
             User(uid, et_user.text.toString(), profileImageUrl, et_email_signup.text.toString())
         val status = Status("pendente")
+        val Id = id(0)
 
         ref.set(user)
         ref.collection("Status").document("socio").set(status)
-        ref.set(status)
+        db.set(Id)
     }
 
 

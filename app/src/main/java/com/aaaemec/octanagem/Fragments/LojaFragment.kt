@@ -53,10 +53,11 @@ class LojaFragment : Fragment() {
                         val price = document.getString("price_$x")
                         val desc = document.getString("desc_$x")
                         val img = document.getString("img_$x")
+                        val valor = document.getString("valor_$x")
 
-                        val m = Produtos(title!!,price!!,img!!,desc!!)
+                        val m = Produtos(title!!,price!!,img!!,desc!!,valor!!)
                         list.add(m)
-                        Log.d("Tag", "existe: $title")
+                        Log.d("Tag", "existe: $valor")
                     }
                     val adapter = ProductAdapter(activity!!,list )
                     RecyclerView.adapter = adapter

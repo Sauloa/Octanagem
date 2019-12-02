@@ -61,7 +61,7 @@ class CartAdapter(var ctx: FragmentActivity, var items: ArrayList<Cart>) :
         fun bind(cart: Cart, ctx: FragmentActivity) {
 
             title.text = cart.title
-            price.text = addMask(cart.price,"R$####")
+            price.text = addMask(cart.price,"####")
             if (cart.thumbnail != null) {
                 Picasso.get().load(cart.thumbnail).into(thumbnail)
             } else {

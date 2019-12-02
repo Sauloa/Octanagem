@@ -70,6 +70,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/produto_desc"
             android:visibility="gone"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/produto_valor"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

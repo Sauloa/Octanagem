@@ -57,4 +57,35 @@
     <color name="textColor">#6e6e6e</color>
 
 
+    <!-- Main color -->
+    <color name="ui_components_android_color_primary">#500096</color>
+
+    <!-- Toolbar's text color -->
+    <!-- Default: @color/ui_components_white_color -->
+    <color name="px_toolbar_text">#ffffff</color>
+
+    <!-- Status Bar color -->
+    <color name="ui_components_android_color_primary_dark">#410069</color>
+
+    <!-- Spinner primary color -->
+    <!-- Default: @color/ui_components_android_color_primary -->
+    <color name="ui_components_spinner_primary_color">@color/ui_components_android_color_primary</color>
+
+    <!-- Spinner secondary color -->
+    <!-- Default: @color/ui_components_android_color_primary -->
+    <color name="ui_components_spinner_secondary_color">@color/ui_components_android_color_primary</color>
+
+    <!-- Spinner background color -->
+    <!-- Default: @color/ui_components_white_color -->
+    <color name="px_background_loading">@color/ui_components_white_color</color>
+
+    <!-- Payment method icon color -->
+    <!-- Default: @color/ui_components_android_color_primary -->
+    <color name="px_paymentMethodTint">@color/ui_components_android_color_primary</color>
+
+    <!-- Inputs color -->
+    <!-- Default: @color/ui_components_android_color_primary -->
+    <color name="px_input">@color/ui_components_android_color_primary</color>
+
+
 </resources>
