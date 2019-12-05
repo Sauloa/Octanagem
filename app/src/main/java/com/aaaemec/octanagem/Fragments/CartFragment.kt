@@ -1,5 +1,6 @@
 package com.aaaemec.octanagem.Fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -25,8 +26,10 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mercadopago.android.px.core.MercadoPagoCheckout
+import com.mercadopago.android.px.model.Payment
 import com.squareup.picasso.Picasso
 import org.json.JSONArray
 import org.json.JSONException
@@ -57,9 +60,18 @@ class CartFragment : Fragment() {
                 container,
                 false
             )
+
+        val V: View = inflater
+            .inflate(
+                R.layout.cart_items,
+                container,
+                false
+            )
+
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val value: TextView = v.findViewById(R.id.tv_value)
         val btn: Button = v.findViewById(R.id.btn_finish)
+        val remove : Button = V.findViewById(R.id.btn_cartitem)
         val itemJsonArray: JSONArray = JSONArray()
         val token = "TEST-e287ed41-dee0-4d74-9039-dd68cf6f685e"
         val dbvazia = db.collection("Carrinhos").document(uid).collection("Produto")
@@ -116,6 +128,13 @@ class CartFragment : Fragment() {
             value.text = addMask("00", "R$##")
 
         }
+
+        remove.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                adapter.notifyDataSetChanged()
+            }
+
+        })
 
         btn.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
@@ -187,6 +206,7 @@ class CartFragment : Fragment() {
 
                 Log.d("TAG", strJson)
 
+
             }
 
 
@@ -195,6 +215,38 @@ class CartFragment : Fragment() {
 
 
         return v
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if (requestCode == MainActivity.REQUEST_CODE) {
+            if (resultCode == MercadoPagoCheckout.PAYMENT_RESULT_CODE) {
+                val payment: Payment =
+                    data!!.getSerializableExtra(MercadoPagoCheckout.EXTRA_PAYMENT_RESULT) as Payment
+
+                val collection = db.collection("Carrinhos").document(uid).collection("Produto")
+
+                deleteall(collection,list.size)
+                Log.d("TAG", "Resultado"  +payment.paymentStatus)
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    fun deleteall(collection: CollectionReference, batchSize: Int){
+        try{
+            var delete = 0
+            collection.limit(batchSize.toLong())
+                .get()
+                .addOnCompleteListener {
+                    for(document in it.result!!.documents){
+                        document.reference.delete()
+                        ++delete
+                    }
+                }
+        }catch (e: Exception){
+
+        }
     }
 
     fun addMask(text: String, mask: String): String {

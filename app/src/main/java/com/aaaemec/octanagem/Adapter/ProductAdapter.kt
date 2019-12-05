@@ -82,7 +82,7 @@ class ProductAdapter(var ctx: FragmentActivity, var items: ArrayList<Produtos>) 
 
 
             titleP.text = items[vholder.adapterPosition].title
-            priceP.text = addMask(items[vholder.adapterPosition].price,"R$####")
+            priceP.text = addMask(items[vholder.adapterPosition].price,"R$###")
             descP.text = items[vholder.adapterPosition].desc
             valorP.text = items[vholder.adapterPosition].valor
             if (items.get(vholder.adapterPosition).thumbnail != null) {
@@ -98,7 +98,7 @@ class ProductAdapter(var ctx: FragmentActivity, var items: ArrayList<Produtos>) 
                 override fun onClick(v: View?) {
 
                     val title = titleP.text.toString()
-                    val price = addMask(priceP.text.toString(), "R$####")
+                    val price = priceP.text.toString()
                     val thumbnail = items[vholder.adapterPosition].thumbnail
                     val valor = valorP.text.toString()
                     val produto = Cart(title, price, thumbnail, x, valor)
