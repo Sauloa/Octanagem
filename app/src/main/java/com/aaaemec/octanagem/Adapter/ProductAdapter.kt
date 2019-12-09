@@ -9,35 +9,22 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.aaaemec.octanagem.Fragments.LojaFragment
-import com.aaaemec.octanagem.Id
 import com.aaaemec.octanagem.MainActivity
 import com.aaaemec.octanagem.MainActivity.Companion.REQUEST_CODE
 import com.aaaemec.octanagem.Model.Cart
-import com.aaaemec.octanagem.Model.Items
 import com.aaaemec.octanagem.Model.Produtos
 import com.aaaemec.octanagem.R
 import com.android.volley.AuthFailureError
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Response
-import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
-import com.mercadopago.*
 import com.mercadopago.android.px.core.MercadoPagoCheckout
-import com.mercadopago.android.px.preferences.CheckoutPreference
-import com.squareup.picasso.Request
 import org.json.JSONObject
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -79,6 +66,7 @@ class ProductAdapter(var ctx: FragmentActivity, var items: ArrayList<Produtos>) 
             val thumbnailP: ImageView = dialog.findViewById(R.id.imageView_Produto)
             val cart: TextView = dialog.findViewById(R.id.tv_addcart)
             val btn: Button = dialog.findViewById(R.id.btn_buynow)
+
 
 
             titleP.text = items[vholder.adapterPosition].title

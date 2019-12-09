@@ -55,7 +55,7 @@
                 android:id="@+id/tv_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="valor"
+                android:text="R$0"
                 android:textColor="@color/textColor"
                 android:textSize="24sp"
                 android:textStyle="bold" />

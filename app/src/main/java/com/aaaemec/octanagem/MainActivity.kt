@@ -252,60 +252,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         menu.findItem(R.id.nav_carteira).setVisible(true)
     }
 
-    fun addMask(text: String, mask: String): String {
-        var formatado: String = ""
-        var i = 0
-        for (m: Char in mask.toCharArray()) {
-            if (m != '#') {
-                formatado += m
-                continue
-            }
-            try {
-                formatado += text[i]
-            } catch (e: Exception) {
-                break
-            }
-            i++
-        }
-        return formatado
-    }
-
-    var strjsonobj : StringBuilder = StringBuilder()
-    val strJson : String = "{\n" +
-            "           \"items\": [\n" +
-            "               {\n" +
-            "               \"title\": \"Item\",\n" +
-            "               \"description\": \"Multicolor Item\",\n" +
-            "               \"quantity\": 1,\n" +
-            "               \"currency_id\": \"BRL\",\n" +
-            "               \"unit_price\": 35.0\n" +
-            "               }\n" +
-            "           ],\n" +
-            "           \"payer\": {\n" +
-            "\t\t    \"name\": \"Núbia\",\n" +
-            "\t\t    \"surname\": \"Macedo\",\n" +
-            "\t\t    \"email\": \"leann@gmail.com\",\n" +
-            "\t\t    \"date_created\": \"2015-06-02T12:58:41.425-04:00\",\n" +
-            "\t\t    \"phone\": {\n" +
-            "\t\t      \"area_code\": \"\",\n" +
-            "\t\t      \"number\": \"880.402.7555\"\n" +
-            "\t\t    },\n" +
-            "\t\t    \"identification\": {\n" +
-            "\t\t      \"type\": \"DNI\",\n" +
-            "\t\t      \"number\": \"123456789\"\n" +
-            "\t\t    },\n" +
-            "\t\t    \"address\": {\n" +
-            "\t\t      \"street_name\": \"Núbia Viela\",\n" +
-            "\t\t      \"street_number\": 25598,\n" +
-            "\t\t      \"zip_code\": \"8972\"\n" +
-            "\t\t    }\n" +
-            "\t\t  }\n" +
-            "     }"
-
-
-    fun pagamento(preference: String) {
-    MercadoPagoCheckout.Builder(token,preference).build()
-        .startPayment(this, Companion.REQUEST_CODE)
+    fun updatefragment(){
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, CartFragment()).commit()
     }
 
 

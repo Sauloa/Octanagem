@@ -43,6 +43,7 @@
     <string name="profile_curso">Curso</string>
     <string name="title_activity_socio_fragment">SocioFragment</string>
     <string name="menu_parceiros">Parceiros</string>
+    <string name="title_activity_maps">Map</string>
 
 
 </resources>

@@ -63,13 +63,14 @@ class CartAdapter(var ctx: FragmentActivity, var items: ArrayList<Cart>) :
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref: Query = mDB.collection("Carrinhos").document(uid).collection("Produto")
         val del = mDB.collection("Carrinhos").document(uid).collection("Produto")
+        val cart: CartFragment = CartFragment()
 
 
         fun bind(cart: Cart, ctx: FragmentActivity) {
 
             title.text = cart.title
             id = cart.id!!
-            price.text = addMask(cart.price,"R$###")
+            price.text = cart.price
             if (cart.thumbnail != null) {
                 Picasso.get().load(cart.thumbnail).into(thumbnail)
             } else {
@@ -84,6 +85,10 @@ class CartAdapter(var ctx: FragmentActivity, var items: ArrayList<Cart>) :
                         .addOnCompleteListener { Log.d("Tag","Item Removido") }
                     Log.d("Tag","Id: "+ID.toString())
                     Log.d("Tag","Id1: "+id)
+
+                    ctx.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, CartFragment()).commit()
+
 
 
                 }

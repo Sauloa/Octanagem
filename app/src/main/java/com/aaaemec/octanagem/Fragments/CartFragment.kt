@@ -28,14 +28,21 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.mercadopago.android.px.configuration.PaymentConfiguration
 import com.mercadopago.android.px.core.MercadoPagoCheckout
+import com.mercadopago.android.px.core.PaymentProcessor
+import com.mercadopago.android.px.internal.features.payment_result.PaymentResultActivity
+import com.mercadopago.android.px.internal.features.plugins.PaymentProcessorActivity
+import com.mercadopago.android.px.internal.util.JsonUtil
 import com.mercadopago.android.px.model.Payment
+import com.mercadopago.android.px.model.PaymentResult
 import com.squareup.picasso.Picasso
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.math.RoundingMode.valueOf
+import com.mercadopago.android.px.model.PaymentResult.Builder as PaymentResultBuilder
 
 
 @Suppress("NAME_SHADOWING")
@@ -48,6 +55,9 @@ class CartFragment : Fragment() {
     var db: FirebaseFirestore = FirebaseFirestore.getInstance()
     lateinit var RecyclerView: RecyclerView
     lateinit var adapter: CartAdapter
+    lateinit var email: String
+    lateinit var nome: String
+    lateinit var user_id: String
 
 
     override fun onCreateView(
@@ -71,65 +81,70 @@ class CartFragment : Fragment() {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val value: TextView = v.findViewById(R.id.tv_value)
         val btn: Button = v.findViewById(R.id.btn_finish)
-        val remove : Button = V.findViewById(R.id.btn_cartitem)
+        val remove: Button = V.findViewById(R.id.btn_cartitem)
         val itemJsonArray: JSONArray = JSONArray()
+        val emailJsonArray: JSONArray = JSONArray()
         val token = "TEST-e287ed41-dee0-4d74-9039-dd68cf6f685e"
-        val dbvazia = db.collection("Carrinhos").document(uid).collection("Produto")
 
         list = arrayListOf()
         RecyclerView = v.findViewById(R.id.rv_cart)
         RecyclerView.setHasFixedSize(true)
         RecyclerView.layoutManager = LinearLayoutManager(context)
 
-        if (dbvazia != null) {
-            db.collection("Carrinhos").document(uid).collection("Produto").get()
-                .addOnSuccessListener { document ->
-                    var total = 0
-                    var x = 0
 
-                    for (document in document) {
-                        val title = document.getString("title")
-                        val price = document.getString("price")
-                        val img = document.getString("thumbnail")
-                        val id = document.getLong("id")
-                        val valor = document.getString("valor")
+        db.collection("Carrinhos").document(uid).collection("Produto").get()
+            .addOnSuccessListener { document ->
+                var total = 0
+                var x = 0
 
-                        val m = Cart(title!!, price!!, img!!, id!!, valor!!)
-                        list.add(m)
+                for (document in document) {
+                    val title = document.getString("title")
+                    val price = document.getString("price")
+                    val img = document.getString("thumbnail")
+                    val id = document.getLong("id")
+                    val valor = document.getString("valor")
 
-
-                        val valorl = Integer.valueOf(valor)
-                        val itemJSON: JSONObject = JSONObject()
+                    val m = Cart(title!!, price!!, img!!, id!!, valor!!)
+                    list.add(m)
 
 
-                        itemJSON.put("title", title)
-                        itemJSON.put("quantity", 1)
-                        itemJSON.put("currency_id", "BRL")
-                        itemJSON.put("unit_price", valorl)
+                    val valorl = Integer.valueOf(valor)
+                    val itemJSON: JSONObject = JSONObject()
 
-                        itemJsonArray.put(itemJSON)
 
-                        val sum = Integer.valueOf(valor)
-                        total += sum
-                        Log.d("Tag", "existe: $title")
-                        Log.d("Tag", "items: $itemJSON")
-                        Log.d("Tag", "items na Array: $itemJsonArray")
-                        Log.d("Tag", "items na list: $list")
+                    itemJSON.put("title", title)
+                    itemJSON.put("picture_url", img.toString())
+                    itemJSON.put("quantity", 1)
+                    itemJSON.put("currency_id", "BRL")
+                    itemJSON.put("unit_price", valorl)
 
-                    }
+                    itemJsonArray.put(itemJSON)
 
-                    value.text = addMask(total.toString(), "R$#####")
-                    val adapter = CartAdapter(activity!!, list)
-                    RecyclerView.adapter = adapter
-                    Log.d("Tag", "Tamanho da lista: ${list.size}")
+                    val sum = Integer.valueOf(valor)
+                    total += sum
+                    Log.d("Tag", "existe: $title")
+                    Log.d("Tag", "items: $itemJSON")
+                    Log.d("Tag", "items na Array: $itemJsonArray")
+                    Log.d("Tag", "items na list: $list")
 
                 }
-        } else {
-            value.text = addMask("00", "R$##")
 
-        }
+                value.text = addMask(total.toString(), "R$#####")
+                val adapter = CartAdapter(activity!!, list)
+                RecyclerView.adapter = adapter
+                Log.d("Tag", "Tamanho da lista: ${list.size}")
 
-        remove.setOnClickListener(object : View.OnClickListener{
+            }
+
+        db.collection("Users").document(uid).get()
+            .addOnSuccessListener { document ->
+                email = document.getString("email").toString()
+                user_id = document.getString("uid").toString()
+            }
+
+
+
+        remove.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 adapter.notifyDataSetChanged()
             }
@@ -138,27 +153,6 @@ class CartFragment : Fragment() {
 
         btn.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-
-
-                try {
-                    for (i in 0 until list.size) {
-
-
-                    }
-
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-
-
-//                val dados = "               {\n" +
-//                        "               \"title\": \"$title\",\n" +
-//                        "               \"description\": \"Multicolor Item\",\n" +
-//                        "               \"quantity\": 1,\n" +
-//                        "               \"currency_id\": \"BRL\",\n" +
-//                        "               \"unit_price\": $valor\n" +
-//                        "               },\n" +""
-
 
                 val url =
                     "https://api.mercadopago.com/checkout/preferences?access_token=TEST-8287893393395202-120104-07fb1f3b9d80e125fc9079d68475fdb1-240461056"
@@ -171,7 +165,8 @@ class CartFragment : Fragment() {
                         itemJsonArray +
                         "           ,\n" +
                         "           \"payer\": {\n" +
-                        "               \"email\": \"payer@email.com\"\n" +
+                        "               \"email\": \"$email\"\n" +
+                        "          ,     \"id\": \"$user_id\"\n" +
                         "           }\n" +
                         "     }"
 
@@ -181,14 +176,22 @@ class CartFragment : Fragment() {
                 val stringRequest = object : JsonObjectRequest(
                     Method.POST, url, obj,
                     Response.Listener<JSONObject> { response ->
-                        val checkoutPreferenceId: String= response.getString("id")
+                        val checkoutPreferenceId: String = response.getString("id")
+                        val client: String = response.getString("client_id")
                         MercadoPagoCheckout.Builder(token, checkoutPreferenceId)
-                            .build().startPayment(context!!, MainActivity.REQUEST_CODE)
+                            .build()
+                            .startPayment(context!!, MainActivity.REQUEST_CODE)
+
+
+
+
+                        Log.d("TAG", "ID: " + checkoutPreferenceId + "\n" + "Client_ id: " + client)
                     },
                     Response.ErrorListener { error ->
                         val erros = error.toString()
 
                     }
+
 
                 ) {
                     @Throws(AuthFailureError::class)
@@ -200,12 +203,21 @@ class CartFragment : Fragment() {
 
                 }
 
-                val policy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                val policy = DefaultRetryPolicy(
+                    DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10,
+                    0,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                )
                 stringRequest.retryPolicy = policy
                 queue.add(stringRequest)
 
                 Log.d("TAG", strJson)
 
+                Log.d("TAG", MercadoPagoCheckout.EXTRA_PAYMENT_RESULT)
+
+//                val i = Intent(context, PaymentResultActivity::class.java)
+//
+//                startActivityForResult(i,1)
 
             }
 
@@ -214,10 +226,14 @@ class CartFragment : Fragment() {
 
 
 
+
+
         return v
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == MainActivity.REQUEST_CODE) {
             if (resultCode == MercadoPagoCheckout.PAYMENT_RESULT_CODE) {
@@ -226,25 +242,29 @@ class CartFragment : Fragment() {
 
                 val collection = db.collection("Carrinhos").document(uid).collection("Produto")
 
-                deleteall(collection,list.size)
-                Log.d("TAG", "Resultado"  +payment.paymentStatus)
+                deleteall(collection, list.size)
+                Log.d("TAG", "Resultado" + payment.paymentStatus)
+            }else{
+                Log.d("TAG", "Resultado: Erro no Result Code "+MercadoPagoCheckout.PAYMENT_RESULT_CODE +" "+resultCode )
             }
+        }else{
+            Log.d("TAG", "Resultado: Erro no Request Code" )
         }
-        super.onActivityResult(requestCode, resultCode, data)
+
     }
 
-    fun deleteall(collection: CollectionReference, batchSize: Int){
-        try{
+    fun deleteall(collection: CollectionReference, batchSize: Int) {
+        try {
             var delete = 0
             collection.limit(batchSize.toLong())
                 .get()
                 .addOnCompleteListener {
-                    for(document in it.result!!.documents){
+                    for (document in it.result!!.documents) {
                         document.reference.delete()
                         ++delete
                     }
                 }
-        }catch (e: Exception){
+        } catch (e: Exception) {
 
         }
     }

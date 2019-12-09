@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#500096</color>
-    <color name="colorPrimaryDark">#410069</color>
-    <color name="colorAccent">#694DB6</color>
+    <color name="colorPrimary">#240B3D</color>
+    <color name="colorPrimaryDark">#1E022C</color>
+    <color name="colorAccent">#6102AC</color>
     <color name="transparent">#00000000</color>
     <color name="editTextBG">#DADADA</color>
 
@@ -58,14 +58,14 @@
 
 
     <!-- Main color -->
-    <color name="ui_components_android_color_primary">#500096</color>
+    <color name="ui_components_android_color_primary">@color/colorPrimary</color>
 
     <!-- Toolbar's text color -->
     <!-- Default: @color/ui_components_white_color -->
     <color name="px_toolbar_text">#ffffff</color>
 
     <!-- Status Bar color -->
-    <color name="ui_components_android_color_primary_dark">#410069</color>
+    <color name="ui_components_android_color_primary_dark">@color/colorPrimaryDark</color>
 
     <!-- Spinner primary color -->
     <!-- Default: @color/ui_components_android_color_primary -->
